@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+@layer base, utils, components;
+
+@import "@webtui/css/base.css";
+@import "@webtui/css/utils/box.css";
+@import "@webtui/css/components/separator.css";
+@import "@webtui/css/components/badge.css";
+@import "@webtui/css/components/textarea.css";
+@import "@webtui/css/components/pre.css";
+@import "@webtui/css/components/popover.css";
+@import "@webtui/css/components/button.css";
+@import "@webtui/css/components/input.css";
+@import "@webtui/css/components/dialog.css";
+@import "@webtui/css/components/typography.css";
+@import "@webtui/css/components/spinner.css";
+@import "@webtui/css/components/checkbox.css";
+@import "@webtui/css/components/tooltip.css";
+
+@import "@webtui/theme-catppuccin";
+
+body,
+html {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background0);
+  border: 1px solid var(--background1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--background2);
+  border: 1px solid var(--background1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--background3);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--background0);
+}
+
+::selection {
+  background-color: var(--foreground2);
+  color: var(--background0);
+}
+
+::-moz-selection {
+  background-color: var(--foreground2);
+  color: var(--background0);
+}
+
+input::selection,
+textarea::selection {
+  background-color: var(--blue);
+  color: var(--background0);
+}
+
+input::-moz-selection,
+textarea::-moz-selection {
+  background-color: var(--blue);
+  color: var(--background0);
+}
+
+pre ::selection,
+code ::selection {
+  background-color: var(--blue);
+  color: var(--background0);
+}
+
+pre ::-moz-selection,
+code ::-moz-selection {
+  background-color: var(--blue);
+  color: var(--background0);
+}
+
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
