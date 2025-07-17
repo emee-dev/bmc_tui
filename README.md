@@ -28,4 +28,4 @@ I’ve successfully ported and customized the following WebTUI components:
 
 Check out the deployed app:
 
-👉 [Vercel]()
+👉 [Vercel](https://bmc-tui.vercel.app/)
