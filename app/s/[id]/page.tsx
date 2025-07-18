@@ -28,6 +28,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/tui/dialog";
+import { Box, BoxBadge } from "@/components/tui/box";
+import { fakeImage } from "@/lib/utils";
 
 type User = {
   firstName: string;
@@ -37,12 +39,12 @@ type User = {
 };
 
 const Page = () => {
+  const [isShareOpen, setShareOpen] = useState(false);
   const [user, setUser] = useState<User>({
     firstName: "Emmanuel",
     bmcHandle: "https://coff.ee/emee_dev",
     twitter: "https://x.com/___emee_",
     github: "https://github.com/emee-dev",
-    
   });
 
   return (
@@ -53,7 +55,9 @@ const Page = () => {
       <section className="w-full flex h-[15ch] items-center justify-between mx-auto  px-[10lh]">
         <div className="flex items-center gap-x-2">
           <Image
-            src="/placeholder.jpg"
+            src={fakeImage("emee_dev", {
+              size: "65x65",
+            })}
             alt="user avatar"
             width={40}
             height={40}
@@ -63,19 +67,19 @@ const Page = () => {
         </div>
 
         <div className="flex items-center gap-x-3  w-fit">
-          <Dialog>
+          <Dialog open={isShareOpen} onOpenChange={(e) => setShareOpen(e)}>
             <DialogTrigger variant="background1" className="w-[5ch]">
               <Upload className="size-5" />
             </DialogTrigger>
 
             <DialogContent box="double" className="w-full">
               <DialogTitle>{`Share ${user.firstName}'s Page`}</DialogTitle>
-              {/* <DialogDescription>
-                Are you sure you want to delete this?
-              </DialogDescription> */}
+              <DialogDescription>
+                This is also a form support.
+              </DialogDescription>
 
               <div className="flex gap-4 justify-end">
-                <Button>Cancel</Button>
+                <Button onClick={() => setShareOpen(false)}>Cancel</Button>
               </div>
             </DialogContent>
           </Dialog>
@@ -99,15 +103,15 @@ const Page = () => {
 
 const PageDescription = ({ user }: { user: User }) => {
   return (
-    <div
-      box-="square"
-      shear-="both"
+    <Box
+      box="square"
+      shear="both"
       className="h-[45ch] items-center justify-center w-full"
     >
       <div className="translate-x-3">
-        <span is-="badge" variant-="background0">
+        <BoxBadge is="badge" variant="background0">
           About
-        </span>
+        </BoxBadge>
       </div>
       <div className="w-[98%] mt-[2ch] mx-auto h-[88%] px-2 flex flex-col gap-y-[1lh]">
         <p className="text-[2ch]">
@@ -133,7 +137,7 @@ const PageDescription = ({ user }: { user: User }) => {
           <p>Recent Supporters</p>
         </div>
       </div>
-    </div>
+    </Box>
   );
 };
 
@@ -164,15 +168,15 @@ const PageDonation = () => {
   }, []);
 
   return (
-    <div
-      box-="square"
-      shear-="both"
+    <Box
+      box="square"
+      shear="both"
       className="h-[45ch] items-center justify-center w-full"
     >
       <div className="translate-x-3">
-        <span is-="badge" variant-="background0">
+        <BoxBadge is="badge" variant="background0">
           Donate
-        </span>
+        </BoxBadge>
       </div>
       <div className="w-[98%] mt-[2ch] mx-auto h-[88%] px-[0.2lh] flex flex-col gap-y-[0.8lh]">
         <div className="text-[2ch] px-[0.2lh] flex items-center">
@@ -235,7 +239,7 @@ const PageDonation = () => {
           )}
         </div>
       </div>
-    </div>
+    </Box>
   );
 };
 

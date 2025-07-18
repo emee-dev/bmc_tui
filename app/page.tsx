@@ -1,47 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { Box, BoxBadge } from "@/components/tui/box";
 import { Button } from "@/components/tui/button";
 import { Cookie } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import Link from "next/link";
 
 function Page() {
-  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
-  const [customAmount, setCustomAmount] = useState("");
-  const [message, setMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [showDialog, setShowDialog] = useState(false);
-
-  const presetAmounts = [3, 5, 10, 25, 50];
-  const recentDonations = [
-    {
-      name: "Anonymous",
-      amount: 5,
-      message: "Keep up the great work!",
-      time: "2m ago",
-    },
-    {
-      name: "Sarah",
-      amount: 10,
-      message: "Love your content!",
-      time: "1h ago",
-    },
-    { name: "Mike", amount: 3, message: "", time: "3h ago" },
-    {
-      name: "Anonymous",
-      amount: 25,
-      message: "Thanks for the tutorials",
-      time: "1d ago",
-    },
-  ];
-
-  const handleDonate = async () => {
-    setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsLoading(false);
-    setShowDialog(false);
-    window.location.href = "/thank-you";
-  };
+  const router = useRouter();
+  const [creator, setCreator] = useState("");
 
   return (
     <main className="w-screen h-full" data-webtui-theme="catppuccin-mocha">
@@ -53,40 +21,58 @@ function Page() {
         </div>
 
         <div className="flex items-center gap-x-3">
-          <div
-            box-="square"
-            shear-="both"
+          <Box
+            box="square"
+            shear="both"
             className="h-[7.4ch] items-center justify-center w-[35ch]"
           >
-            <div>
-              <span is-="badge" variant-="background0">
-                Search creators
-              </span>
-            </div>
+            <BoxBadge is="badge" variant="background0">
+              Search creators
+            </BoxBadge>
             <div className="w-full my-auto mt-0.5 px-2">
-              <input placeholder=".." className="w-full" />
+              <input
+                placeholder="..."
+                className="w-full"
+                value={creator}
+                autoCorrect="off"
+                autoComplete="off"
+                onChange={(e) => setCreator(e.target.value)}
+                onKeyDown={(e) => {
+                  let key = e.code;
+
+                  if (key === "Enter") {
+                    console.log(e.code);
+
+                    router.push(`/s/${creator}`);
+                  }
+                }}
+              />
             </div>
-          </div>
+          </Box>
 
           <div className="flex gap-x-2">
-            <Button variant="background1" className=" w-16 p-0">
-              Login
-            </Button>
-            <Button>Sign up</Button>
+            <Link href="/login">
+              <Button variant="background1" className=" w-16 p-0">
+                Login
+              </Button>
+            </Link>
+            <Link href="/sign-up">
+              <Button>Sign up</Button>
+            </Link>
           </div>
         </div>
       </section>
 
       {/* Hero */}
-      <div
+      <Box
         className="mt-[7%] h-[37ch] flex flex-col mx-[10%]"
-        box-="square"
-        shear-="both"
+        box="square"
+        shear="both"
       >
         <div className="translate-x-3">
-          <span is-="badge" variant-="background0">
+          <BoxBadge is="badge" variant="background0">
             Hero
-          </span>
+          </BoxBadge>
         </div>
         <div className="mx-auto flex items-center gap-x-2 mt-[0.5lh]">
           <span is-="spinner" variant-="dots"></span>
@@ -104,9 +90,11 @@ function Page() {
         </div>
 
         <div className="mx-auto mt-[0.5lh]">
-          <Button>Get started</Button>
+          <Link href="/user">
+            <Button>Get started</Button>
+          </Link>
         </div>
-      </div>
+      </Box>
     </main>
   );
 }

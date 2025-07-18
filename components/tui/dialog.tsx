@@ -2,49 +2,92 @@
 
 import { Button, ButtonProps } from "@/components/tui/button";
 import { cn } from "@/lib/utils";
-import * as React from "react";
+import {
+  createContext,
+  HTMLAttributes,
+  ReactNode,
+  RefObject,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { Box } from "@/components/tui/box";
 
 type Box = "round" | "square" | "double";
 
-const DialogContext = React.createContext<{
+const DialogContext = createContext<{
   open: boolean;
   setOpen: (value: boolean) => void;
-  dialogRef: React.RefObject<HTMLDialogElement>;
+  dialogRef: RefObject<HTMLDialogElement>;
+
+  outside_open?: boolean;
+  outside_onOpenChange?: (value: boolean) => void;
 } | null>(null);
 
-function Dialog({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = React.useState(false);
-  const dialogRef = React.useRef<HTMLDialogElement>(null);
+function Dialog({
+  children,
+  open,
+  onOpenChange,
+}: {
+  children: ReactNode;
+  open?: boolean;
+  onOpenChange?: (val: boolean) => void;
+}) {
+  const [_open, _setOpen] = useState(false);
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
 
-    if (open && !dialog.open) {
-      dialog.showModal();
-    } else if (!open && dialog.open) {
-      dialog.close();
+    if (open === undefined) {
+      if (_open && !dialog.open) {
+        dialog.showModal();
+      } else if (!_open && dialog.open) {
+        dialog.close();
+      }
+    } else {
+      if (_open && !dialog.open && open) {
+        dialog.showModal();
+      } else if ((!_open && dialog.open) || !open) {
+        dialog.close();
+      }
     }
 
-    const handleClose = () => setOpen(false);
+    const handleClose = () => {
+      _setOpen(false);
+      onOpenChange?.(false);
+    };
     dialog.addEventListener("close", handleClose);
     return () => dialog.removeEventListener("close", handleClose);
-  }, [open]);
+  }, [_open, open]);
 
   return (
-    <DialogContext.Provider value={{ open, setOpen, dialogRef }}>
+    <DialogContext.Provider
+      value={{
+        open: _open,
+        setOpen: _setOpen,
+        dialogRef,
+        outside_open: open,
+        outside_onOpenChange: onOpenChange,
+      }}
+    >
       {children}
     </DialogContext.Provider>
   );
 }
 
 function DialogTrigger({ children, className, ...props }: ButtonProps) {
-  const context = React.useContext(DialogContext);
+  const context = useContext(DialogContext);
   if (!context) throw new Error("DialogTrigger must be used inside Dialog");
 
   return (
     <Button
-      onClick={() => context.setOpen(true)}
+      onClick={() => {
+        context.setOpen(true);
+        context.outside_onOpenChange?.(true);
+      }}
       className={cn(className)}
       {...props}
     >
@@ -58,15 +101,15 @@ function DialogContent({
   box = "round",
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement> & {
+}: HTMLAttributes<HTMLDivElement> & {
   box?: Box;
 }) {
-  const context = React.useContext(DialogContext);
+  const context = useContext(DialogContext);
   if (!context) throw new Error("DialogContent must be used inside Dialog");
 
-  const wrapperRef = React.useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         context.open &&
@@ -74,6 +117,7 @@ function DialogContent({
         !wrapperRef.current.contains(event.target as Node)
       ) {
         context.setOpen(false);
+        context.outside_onOpenChange?.(false);
       }
     };
 
@@ -89,10 +133,9 @@ function DialogContent({
       popover="auto"
       className={cn("min-w-[20lh]", className)}
     >
-      {/* TODO convert to box */}
-      <div ref={wrapperRef} box-={box} className="w-full" {...props}>
+      <Box ref={wrapperRef} box={box} className="w-full" {...props}>
         {children}
-      </div>
+      </Box>
     </dialog>
   );
 }
@@ -100,14 +143,14 @@ function DialogContent({
 const DialogTitle = ({
   className,
   ...props
-}: React.HTMLAttributes<HTMLHeadingElement>) => (
+}: HTMLAttributes<HTMLHeadingElement>) => (
   <h2 className={cn("text-lg font-semibold mb-2", className)} {...props} />
 );
 
 const DialogDescription = ({
   className,
   ...props
-}: React.HTMLAttributes<HTMLParagraphElement>) => (
+}: HTMLAttributes<HTMLParagraphElement>) => (
   <p className={cn("text-sm text-gray-500 mb-4", className)} {...props} />
 );
 

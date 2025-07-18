@@ -3,6 +3,8 @@
 This is a developer-focused clone of [BuyMeACoffee](https://www.buymeacoffee.com), reimagined with **terminal-inspired aesthetics** using [WebTUI](https://webtui.ironclad.sh/). It's designed to feel native to developers who live in the terminal.
 
 > ⚠️ Note: This is my first time working with TUI (Terminal UI) frameworks, so this project represents a personal exploration of WebTUI, and how far it can be pushed to create expressive UIs for the web.
+>
+> Base template scaffolded by v0, rest of app implemented by me.
 
 ## 💡 Motivation
 
@@ -17,12 +19,13 @@ I’ve successfully ported and customized the following WebTUI components:
 - ✅ **Button** – Styled for both light/dark themes with terminal consistency
 - ✅ **Dialog** – Modal-like interface for user confirmations
 - ✅ **Tooltip** – Helpful hints in a minimal terminal style
+- ✅ **Box** – Minimal terminal style columns.
 
 ## 🧪 Tech Stack
 
 - [WebTUI CSS](https://webtui.ironclad.sh/)
 - [Next.js](https://nextjs.org/)
-- Tailwind CSS v4 (using the new `tailwindcss/colors` and utility-first theming)
+- Tailwind CSS v4
 
 ## 📸 Demo
 
