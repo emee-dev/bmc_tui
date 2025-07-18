@@ -1,26 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import { Box, BoxBadge } from "@/components/tui/box";
 import { Button } from "@/components/tui/button";
-import {
-  Cookie,
-  ExternalLink,
-  Github,
-  Info,
-  Menu,
-  Pizza,
-  Settings2,
-  Twitter,
-  Upload,
-  X,
-} from "lucide-react";
-import Image from "next/image";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/tui/tooltip";
 import {
   Dialog,
   DialogContent,
@@ -28,8 +9,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/tui/dialog";
-import { Box, BoxBadge } from "@/components/tui/box";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/tui/tooltip";
+import {
+  FakeUserData,
+  STORAGE_KEY,
+  useLocalStorage,
+} from "@/hooks/use-local-storage";
 import { fakeImage } from "@/lib/utils";
+import { Github, Info, Menu, Pizza, Twitter, Upload, X } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 type User = {
   firstName: string;
@@ -40,12 +34,7 @@ type User = {
 
 const Page = () => {
   const [isShareOpen, setShareOpen] = useState(false);
-  const [user, setUser] = useState<User>({
-    firstName: "Emmanuel",
-    bmcHandle: "https://coff.ee/emee_dev",
-    twitter: "https://x.com/___emee_",
-    github: "https://github.com/emee-dev",
-  });
+  const { value } = useLocalStorage<FakeUserData | null>(STORAGE_KEY.USER_DATA);
 
   return (
     <main
@@ -63,7 +52,7 @@ const Page = () => {
             height={40}
             className="rounded-full"
           />
-          <span>{user.firstName}</span>
+          <span>{value?.firstName}</span>
         </div>
 
         <div className="flex items-center gap-x-3  w-fit">
@@ -73,7 +62,7 @@ const Page = () => {
             </DialogTrigger>
 
             <DialogContent box="double" className="w-full">
-              <DialogTitle>{`Share ${user.firstName}'s Page`}</DialogTitle>
+              <DialogTitle>{`Share ${value?.firstName}'s Page`}</DialogTitle>
               <DialogDescription>
                 This is also a form support.
               </DialogDescription>
@@ -92,16 +81,43 @@ const Page = () => {
         </div>
       </section>
 
+      {!value && (
+        <Box
+          box="square"
+          shear="both"
+          className="h-[15ch] items-center justify-center w-[70%] mx-auto"
+        >
+          <div className="translate-x-3">
+            <BoxBadge is="badge" variant="background0">
+              Dashboard
+            </BoxBadge>
+          </div>
+
+          <div className="w-[98%] mx-auto h-[88%] px-[1.3ch] flex items-center gap-x-[2lh] justify-center">
+            Invalid user account
+            <Link href="/sign-up">
+              <Button>Register</Button>
+            </Link>
+          </div>
+        </Box>
+      )}
+
       {/* Dashboard separator */}
-      <div className="grid grid-cols-2 w-[70%] place-items-center mx-auto">
-        <PageDescription user={user} />
-        <PageDonation />
-      </div>
+      {value && (
+        <div className="grid grid-cols-2 w-[70%] place-items-center mx-auto">
+          <PageDescription user={value} />
+          <PageDonation user={value} />
+        </div>
+      )}
     </main>
   );
 };
 
-const PageDescription = ({ user }: { user: User }) => {
+const PageDescription = ({
+  user,
+}: {
+  user: FakeUserData | null | undefined;
+}) => {
   return (
     <Box
       box="square"
@@ -118,18 +134,13 @@ const PageDescription = ({ user }: { user: User }) => {
           <code>Building Http</code>
         </p>
 
-        <p className="text-[1.7ch]">
-          Currently, I'm focused on developing the best HTTP client for API
-          development. Looking ahead, I envision myself leading a team of
-          engineers to create a top-tier HTTP client that rivals existing
-          alternatives.
-        </p>
+        <p className="text-[1.7ch]">{user?.about}</p>
 
         <div className="flex items-center gap-x-[1.5ch]">
-          <Link href={user.github}>
+          <Link href={user?.github || "/"}>
             <Github className="size-5 text-gray-700" />
           </Link>
-          <Link href={user.twitter}>
+          <Link href={user?.twitter || "/"}>
             <Twitter className="size-5 text-gray-700" />
           </Link>
         </div>
@@ -158,7 +169,7 @@ const initialPrices = [
   },
 ];
 
-const PageDonation = () => {
+const PageDonation = ({ user }: { user: FakeUserData | null | undefined }) => {
   const [selectedPrice, setSelectedPrice] = useState<Price | null>();
   const [isMonthly, setIsMonthly] = useState<boolean>(false);
   const [prices, setPrices] = useState<Price[]>(initialPrices);
@@ -181,7 +192,7 @@ const PageDonation = () => {
       <div className="w-[98%] mt-[2ch] mx-auto h-[88%] px-[0.2lh] flex flex-col gap-y-[0.8lh]">
         <div className="text-[2ch] px-[0.2lh] flex items-center">
           <p>
-            Buy <code>Emmanuel</code> a pizza
+            Buy <code>{user?.firstName}</code> a pizza
           </p>
           <Tooltip>
             <TooltipTrigger>

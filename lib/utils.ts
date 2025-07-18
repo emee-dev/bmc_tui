@@ -29,3 +29,7 @@ export function fakeImage(input: string, options?: RoboHashOptions): string {
   const query = params.toString();
   return `https://robohash.org/${input.trim()}.png${query ? `?${query}` : ""}`;
 }
+
+export const wait = async (sec: number) => {
+  return new Promise((resolve) => setTimeout(resolve, sec));
+};
